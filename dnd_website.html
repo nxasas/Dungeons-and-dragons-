@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚔️ DnD Character Vault</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Noto+Serif+Thai:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --parchment: #f5e6c8;
+  --parchment-dark: #e8d5a3;
+  --ink: #1a0f00;
+  --ink-light: #3d2b1a;
+  --crimson: #8b1a1a;
+  --crimson-light: #c0392b;
+  --gold: #c9a84c;
+  --gold-light: #f0c040;
+  --midnight: #0a0605;
+  --dark-wood: #1c1008;
+  --ember: #e07b39;
+  --ash: #6b5a4e;
+  --silver: #c0c0c0;
+  --shadow: rgba(0,0,0,0.6);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--midnight);
+  font-family: 'IM Fell English', serif;
+  color: var(--parchment);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== BACKGROUND ===== */
+.bg-layer {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 20% 20%, rgba(139,26,26,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 70% at 80% 80%, rgba(201,168,76,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 50% at 50% 0%, rgba(28,16,8,0.9) 0%, transparent 70%),
+    linear-gradient(160deg, #0a0605 0%, #160c04 50%, #0d0903 100%);
+}
+.bg-layer::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* ===== PAGES ===== */
+.page { display: none; position: relative; z-index: 10; min-height: 100vh; }
+.page.active { display: flex; }
+
+/* ===== LOGIN PAGE ===== */
+#loginPage {
+  align-items: center; justify-content: center; padding: 20px;
+  flex-direction: column;
+}
+
+.login-box {
+  background: linear-gradient(145deg, rgba(28,16,8,0.95) 0%, rgba(15,8,3,0.98) 100%);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 2px;
+  padding: 50px 44px;
+  width: 100%; max-width: 440px;
+  position: relative;
+  box-shadow: 0 0 60px rgba(139,26,26,0.2), 0 0 120px rgba(0,0,0,0.8), inset 0 1px 0 rgba(201,168,76,0.1);
+  animation: riseUp 0.8s ease both;
+}
+@keyframes riseUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+
+.login-box::before, .login-box::after {
+  content: '';
+  position: absolute;
+  width: 40px; height: 40px;
+  border-color: rgba(201,168,76,0.4);
+  border-style: solid;
+}
+.login-box::before { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+.login-box::after { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+.login-logo {
+  text-align: center; margin-bottom: 36px;
+}
+.login-logo h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 28px; font-weight: 900;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--ember));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 3px; line-height: 1.2;
+}
+.login-logo p {
+  font-family: 'Cinzel', serif;
+  font-size: 11px; letter-spacing: 5px;
+  color: var(--ash); margin-top: 8px;
+  text-transform: uppercase;
+}
+.login-divider {
+  width: 60%; height: 1px; margin: 16px auto 0;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.tab-row {
+  display: flex; gap: 0; margin-bottom: 32px;
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+}
+.tab-btn {
+  flex: 1; padding: 12px;
+  font-family: 'Cinzel', serif; font-size: 12px;
+  letter-spacing: 2px; text-transform: uppercase;
+  background: none; border: none; cursor: pointer;
+  color: var(--ash);
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s; margin-bottom: -1px;
+}
+.tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+.tab-btn:hover { color: var(--parchment); }
+
+.form-group { margin-bottom: 20px; }
+.form-group label {
+  display: block;
+  font-family: 'Cinzel', serif; font-size: 10px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--ash); margin-bottom: 8px;
+}
+.form-group input {
+  width: 100%; padding: 12px 16px;
+  background: rgba(245,230,200,0.04);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 1px;
+  color: var(--parchment);
+  font-family: 'IM Fell English', serif; font-size: 15px;
+  outline: none; transition: border-color 0.3s;
+}
+.form-group input:focus { border-color: rgba(201,168,76,0.6); background: rgba(245,230,200,0.06); }
+.form-group input::placeholder { color: rgba(245,230,200,0.25); font-style: italic; }
+
+.btn-primary {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--crimson), #6b1212);
+  border: 1px solid rgba(201,168,76,0.3);
+  color: var(--gold-light);
+  font-family: 'Cinzel', serif; font-size: 13px;
+  letter-spacing: 3px; text-transform: uppercase;
+  cursor: pointer; border-radius: 1px;
+  transition: all 0.3s;
+  box-shadow: 0 2px 20px rgba(139,26,26,0.3);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #a52020, var(--crimson));
+  box-shadow: 0 4px 30px rgba(139,26,26,0.5);
+  transform: translateY(-1px);
+}
+
+.msg { margin-top: 16px; text-align: center; font-size: 13px; font-style: italic; min-height: 20px; }
+.msg.error { color: #e07b39; }
+.msg.success { color: var(--gold); }
+
+/* ===== MAIN APP ===== */
+#appPage { flex-direction: column; }
+
+/* NAVBAR */
+.navbar {
+  position: sticky; top: 0; z-index: 100;
+  background: linear-gradient(180deg, rgba(10,6,5,0.98) 0%, rgba(10,6,5,0.92) 100%);
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+  backdrop-filter: blur(10px);
+  padding: 0 24px;
+  display: flex; align-items: center; gap: 0;
+}
+.navbar-brand {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 16px;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  padding: 16px 24px 16px 0;
+  border-right: 1px solid rgba(201,168,76,0.15);
+  margin-right: 16px; white-space: nowrap;
+}
+.nav-tabs { display: flex; flex: 1; gap: 0; }
+.nav-tab {
+  padding: 18px 20px;
+  font-family: 'Cinzel', serif; font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--ash); background: none; border: none;
+  cursor: pointer; border-bottom: 2px solid transparent;
+  transition: all 0.3s; white-space: nowrap;
+}
+.nav-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.nav-tab:hover { color: var(--parchment); }
+.nav-tab .tab-icon { margin-right: 6px; font-size: 14px; }
+
+.navbar-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+.user-badge {
+  font-family: 'Cinzel', serif; font-size: 11px;
+  color: var(--ash); letter-spacing: 1px;
+}
+.btn-logout {
+  padding: 8px 16px;
+  border: 1px solid rgba(201,168,76,0.3);
+  background: none; color: var(--gold);
+  font-family: 'Cinzel', serif; font-size: 10px;
+  letter-spacing: 2px; cursor: pointer; border-radius: 1px;
+  transition: all 0.3s; text-transform: uppercase;
+}
+.btn-logout:hover { background: rgba(201,168,76,0.1); }
+
+/* ===== SHEET PAGES ===== */
+.sheet-page { display: none; padding: 32px 24px 60px; max-width: 1300px; margin: 0 auto; width: 100%; }
+.sheet-page.active { display: block; }
+
+/* ===== PARCHMENT PANELS ===== */
+.panel {
+  background: linear-gradient(145deg, rgba(28,16,8,0.8), rgba(15,8,3,0.9));
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 2px; padding: 24px; position: relative;
+  transition: border-color 0.3s;
+}
+.panel:hover { border-color: rgba(201,168,76,0.35); }
+.panel::before, .panel::after,
+.panel .corner-bl, .panel .corner-br {
+  content: ''; position: absolute;
+  width: 16px; height: 16px;
+  border-color: rgba(201,168,76,0.35); border-style: solid;
+}
+.panel::before { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
+.panel::after { top: 6px; right: 6px; border-width: 1px 1px 0 0; }
+.panel .corner-bl { bottom: 6px; left: 6px; border-width: 0 0 1px 1px; }
+.panel .corner-br { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
+
+.panel-title {
+  font-family: 'Cinzel', serif; font-size: 10px;
+  letter-spacing: 4px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.panel-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(201,168,76,0.4), transparent); }
+
+/* ===== INPUTS ===== */
+.field { margin-bottom: 12px; }
+.field label {
+  display: block; font-family: 'Cinzel', serif; font-size: 9px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--ash); margin-bottom: 5px;
+}
+.field input, .field textarea, .field select {
+  width: 100%; padding: 9px 12px;
+  background: rgba(245,230,200,0.04);
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: 1px; color: var(--parchment);
+  font-family: 'IM Fell English', serif; font-size: 14px;
+  outline: none; transition: border-color 0.3s;
+  resize: vertical;
+}
+.field input:focus, .field textarea:focus { border-color: rgba(201,168,76,0.5); background: rgba(245,230,200,0.06); }
+.field textarea { min-height: 80px; }
+.field-row { display: grid; gap: 12px; }
+
+/* ===== STAT BOXES ===== */
+.stat-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 20px; }
+.stat-box {
+  background: rgba(139,26,26,0.08);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 2px; padding: 12px 8px;
+  text-align: center; cursor: default;
+  transition: all 0.3s;
+}
+.stat-box:hover { border-color: rgba(201,168,76,0.5); background: rgba(139,26,26,0.15); }
+.stat-name {
+  font-family: 'Cinzel', serif; font-size: 8px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 6px; display: block;
+}
+.stat-score {
+  width: 100%; text-align: center; padding: 4px;
+  font-family: 'Cinzel Decorative', serif; font-size: 22px;
+  font-weight: 700; color: var(--parchment);
+  background: none; border: none; outline: none;
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+}
+.stat-score:focus { border-bottom-color: var(--gold); }
+.stat-mod {
+  font-family: 'Cinzel', serif; font-size: 16px;
+  color: var(--gold); margin-top: 4px; display: block;
+}
+
+/* ===== SKILLS ===== */
+.skill-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 0; border-bottom: 1px solid rgba(201,168,76,0.06);
+}
+.skill-check {
+  width: 14px; height: 14px;
+  border: 1px solid rgba(201,168,76,0.4);
+  border-radius: 50%; cursor: pointer; flex-shrink: 0;
+  background: none; transition: background 0.2s;
+  appearance: none; -webkit-appearance: none;
+}
+.skill-check:checked { background: var(--gold); border-color: var(--gold); }
+.skill-bonus {
+  width: 36px; text-align: center; padding: 2px;
+  background: none; border: none; border-bottom: 1px solid rgba(201,168,76,0.2);
+  color: var(--parchment); font-family: 'Cinzel', serif; font-size: 13px;
+  outline: none;
+}
+.skill-bonus:focus { border-bottom-color: var(--gold); }
+.skill-name {
+  font-family: 'IM Fell English', serif; font-size: 13px;
+  color: var(--parchment-dark); flex: 1;
+}
+.skill-attr { font-family: 'Cinzel', serif; font-size: 9px; color: var(--ash); }
+
+/* ===== COMBAT BOX ===== */
+.combat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.combat-stat {
+  background: rgba(139,26,26,0.08);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 2px; padding: 14px;
+  text-align: center;
+}
+.combat-stat label {
+  font-family: 'Cinzel', serif; font-size: 8px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); display: block; margin-bottom: 6px;
+}
+.combat-stat input {
+  width: 100%; text-align: center;
+  font-family: 'Cinzel', serif; font-size: 20px;
+  color: var(--parchment);
+  background: none; border: none; outline: none;
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+}
+.combat-stat input:focus { border-bottom-color: var(--gold); }
+
+/* ===== HP ===== */
+.hp-section { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.hp-box { background: rgba(139,26,26,0.08); border: 1px solid rgba(201,168,76,0.2); border-radius: 2px; padding: 14px; text-align: center; }
+.hp-box label { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 6px; }
+.hp-box input { width: 100%; text-align: center; font-family: 'Cinzel', serif; font-size: 22px; color: var(--parchment); background: none; border: none; outline: none; border-bottom: 1px solid rgba(201,168,76,0.2); }
+.hp-box input:focus { border-bottom-color: var(--gold); }
+
+/* ===== DEATH SAVES ===== */
+.death-saves { display: flex; gap: 20px; align-items: center; padding: 12px; background: rgba(139,26,26,0.06); border: 1px solid rgba(201,168,76,0.15); border-radius: 2px; }
+.death-saves label { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; }
+.save-circles { display: flex; gap: 6px; }
+.save-circle {
+  width: 18px; height: 18px;
+  border: 1px solid rgba(201,168,76,0.4); border-radius: 50%;
+  cursor: pointer; appearance: none; -webkit-appearance: none;
+  background: none; transition: background 0.2s;
+}
+.save-circle.success:checked { background: #2d8a2d; border-color: #4caf50; }
+.save-circle.failure:checked { background: var(--crimson); border-color: #e53935; }
+
+/* ===== ATTACKS TABLE ===== */
+.attacks-table { width: 100%; border-collapse: collapse; }
+.attacks-table th { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); padding: 8px 6px; border-bottom: 1px solid rgba(201,168,76,0.2); text-align: left; }
+.attacks-table td { padding: 6px; border-bottom: 1px solid rgba(201,168,76,0.06); }
+.attacks-table input { width: 100%; background: none; border: none; outline: none; border-bottom: 1px solid rgba(201,168,76,0.1); color: var(--parchment); font-family: 'IM Fell English', serif; font-size: 13px; padding: 3px; }
+.attacks-table input:focus { border-bottom-color: var(--gold); }
+
+/* ===== SPELL SLOTS ===== */
+.spell-level-block { background: rgba(139,26,26,0.06); border: 1px solid rgba(201,168,76,0.15); border-radius: 2px; padding: 14px; margin-bottom: 12px; }
+.spell-level-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.spell-level-badge {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--crimson), #6b1212);
+  border: 1px solid rgba(201,168,76,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cinzel Decorative', serif; font-size: 14px;
+  color: var(--gold); flex-shrink: 0;
+}
+.spell-slots-row { display: flex; gap: 8px; align-items: center; }
+.slot-input { width: 52px; text-align: center; padding: 4px; background: none; border: none; border-bottom: 1px solid rgba(201,168,76,0.2); color: var(--parchment); font-family: 'Cinzel', serif; font-size: 14px; outline: none; }
+.slot-input:focus { border-bottom-color: var(--gold); }
+.slot-label { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 1px; color: var(--ash); text-transform: uppercase; }
+.spell-list { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; }
+.spell-row { display: flex; align-items: center; gap: 8px; }
+.spell-prepared { width: 14px; height: 14px; border: 1px solid rgba(201,168,76,0.4); border-radius: 50%; cursor: pointer; appearance: none; -webkit-appearance: none; background: none; flex-shrink: 0; }
+.spell-prepared:checked { background: var(--crimson); border-color: var(--crimson-light); }
+.spell-name-input { flex: 1; background: none; border: none; border-bottom: 1px solid rgba(201,168,76,0.1); color: var(--parchment); font-family: 'IM Fell English', serif; font-size: 13px; padding: 3px; outline: none; }
+.spell-name-input:focus { border-bottom-color: var(--gold); }
+
+/* ===== DICE PAGE ===== */
+.dice-page-wrap { max-width: 900px; margin: 0 auto; padding: 32px 24px 60px; }
+.dice-page-title { text-align: center; margin-bottom: 40px; }
+.dice-page-title h2 { font-family: 'Cinzel Decorative', serif; font-size: 32px; font-weight: 900; background: linear-gradient(135deg, var(--gold-light), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px; }
+.dice-page-title p { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 3px; color: var(--ash); text-transform: uppercase; }
+
+.dice-tray { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 36px; }
+
+.die-card {
+  background: linear-gradient(145deg, rgba(28,16,8,0.9), rgba(15,8,3,0.95));
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 4px; padding: 24px 20px;
+  text-align: center; position: relative;
+  transition: all 0.3s;
+}
+.die-card:hover { border-color: rgba(201,168,76,0.45); transform: translateY(-2px); }
+.die-card::before, .die-card::after, .die-card .dc-bl, .die-card .dc-br {
+  content: ''; position: absolute; width: 12px; height: 12px;
+  border-color: rgba(201,168,76,0.3); border-style: solid;
+}
+.die-card::before { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
+.die-card::after { top: 6px; right: 6px; border-width: 1px 1px 0 0; }
+.die-card .dc-bl { bottom: 6px; left: 6px; border-width: 0 0 1px 1px; }
+.die-card .dc-br { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
+
+.die-svg { width: 70px; height: 70px; margin: 0 auto 12px; }
+.die-name { font-family: 'Cinzel Decorative', serif; font-size: 18px; color: var(--gold); margin-bottom: 8px; }
+.die-count-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 16px; }
+.count-btn {
+  width: 28px; height: 28px;
+  background: rgba(139,26,26,0.3); border: 1px solid rgba(201,168,76,0.3);
+  color: var(--gold); font-size: 18px; line-height: 1;
+  cursor: pointer; border-radius: 1px; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cinzel', serif;
+}
+.count-btn:hover { background: rgba(139,26,26,0.6); border-color: var(--gold); }
+.die-count { font-family: 'Cinzel Decorative', serif; font-size: 22px; color: var(--parchment); min-width: 30px; text-align: center; }
+.die-modifier-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; }
+.die-modifier-row label { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 2px; color: var(--ash); text-transform: uppercase; }
+.die-modifier { width: 50px; text-align: center; padding: 4px; background: rgba(245,230,200,0.04); border: 1px solid rgba(201,168,76,0.2); border-radius: 1px; color: var(--parchment); font-family: 'Cinzel', serif; font-size: 14px; outline: none; }
+.die-modifier:focus { border-color: rgba(201,168,76,0.5); }
+.btn-roll {
+  width: 100%; padding: 10px;
+  background: linear-gradient(135deg, var(--crimson), #6b1212);
+  border: 1px solid rgba(201,168,76,0.3); border-radius: 1px;
+  color: var(--gold); font-family: 'Cinzel', serif;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-roll:hover { background: linear-gradient(135deg, #a52020, var(--crimson)); box-shadow: 0 4px 20px rgba(139,26,26,0.4); }
+.btn-roll:active { transform: scale(0.97); }
+
+.die-result { margin-top: 12px; min-height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.result-total { font-family: 'Cinzel Decorative', serif; font-size: 36px; color: var(--gold-light); line-height: 1; }
+.result-breakdown { font-family: 'Cinzel', serif; font-size: 11px; color: var(--ash); margin-top: 4px; letter-spacing: 1px; }
+.result-label { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--ash); margin-top: 2px; }
+
+@keyframes diceRoll {
+  0% { transform: scale(0.5) rotate(-15deg); opacity: 0; }
+  60% { transform: scale(1.15) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.result-anim { animation: diceRoll 0.4s ease both; }
+
+/* DICE HISTORY */
+.dice-history-panel { background: linear-gradient(145deg, rgba(28,16,8,0.8), rgba(15,8,3,0.9)); border: 1px solid rgba(201,168,76,0.2); border-radius: 2px; padding: 24px; }
+.history-title { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.history-title::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(201,168,76,0.4), transparent); }
+.history-list { display: flex; flex-wrap: wrap; gap: 8px; max-height: 160px; overflow-y: auto; }
+.history-item { padding: 6px 12px; background: rgba(139,26,26,0.1); border: 1px solid rgba(201,168,76,0.15); border-radius: 1px; font-family: 'Cinzel', serif; font-size: 11px; color: var(--parchment-dark); }
+.history-item strong { color: var(--gold); }
+.btn-clear-history { margin-left: auto; padding: 4px 10px; background: none; border: 1px solid rgba(201,168,76,0.2); color: var(--ash); font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; border-radius: 1px; }
+.btn-clear-history:hover { border-color: rgba(201,168,76,0.4); color: var(--gold); }
+
+/* SAVE BAR */
+.save-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+  background: linear-gradient(180deg, rgba(10,6,5,0.0) 0%, rgba(10,6,5,0.97) 40%);
+  padding: 20px 24px 20px;
+  display: flex; align-items: center; justify-content: flex-end; gap: 12px;
+}
+.save-bar.hidden { display: none; }
+.btn-save, .btn-edit {
+  padding: 10px 28px;
+  font-family: 'Cinzel', serif; font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; border-radius: 1px; transition: all 0.3s;
+}
+.btn-save {
+  background: linear-gradient(135deg, var(--gold), #a07830);
+  border: none; color: var(--ink);
+  box-shadow: 0 2px 20px rgba(201,168,76,0.3);
+}
+.btn-save:hover { box-shadow: 0 4px 30px rgba(201,168,76,0.5); transform: translateY(-1px); }
+.btn-edit {
+  background: none; border: 1px solid rgba(201,168,76,0.3); color: var(--gold);
+}
+.btn-edit:hover { background: rgba(201,168,76,0.1); }
+.save-msg { font-family: 'Cinzel', serif; font-size: 11px; color: var(--gold); opacity: 0; transition: opacity 0.5s; }
+.save-msg.show { opacity: 1; }
+
+/* ===== EDIT MODE ===== */
+body.view-mode .field input,
+body.view-mode .field textarea,
+body.view-mode .field select,
+body.view-mode .stat-score,
+body.view-mode .skill-bonus,
+body.view-mode .combat-stat input,
+body.view-mode .hp-box input,
+body.view-mode .attacks-table input,
+body.view-mode .slot-input,
+body.view-mode .spell-name-input,
+body.view-mode .die-modifier {
+  pointer-events: none; border-bottom-color: transparent; cursor: default;
+}
+body.view-mode .skill-check,
+body.view-mode .spell-prepared,
+body.view-mode .save-circle { pointer-events: none; }
+body.view-mode .btn-edit { display: flex; }
+body.view-mode .btn-save { display: none; }
+body.edit-mode .btn-save { display: flex; }
+body.edit-mode .btn-edit { display: none; }
+
+/* ===== LAYOUT GRIDS ===== */
+.layout-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.layout-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.layout-sidebar { display: grid; grid-template-columns: 260px 1fr; gap: 20px; margin-bottom: 20px; }
+.spell-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.mb20 { margin-bottom: 20px; }
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.4); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .stat-grid { grid-template-columns: repeat(3, 1fr); }
+  .layout-sidebar { grid-template-columns: 1fr; }
+  .layout-2 { grid-template-columns: 1fr; }
+  .layout-3 { grid-template-columns: 1fr; }
+  .spell-grid-3 { grid-template-columns: 1fr; }
+  .navbar { flex-wrap: wrap; }
+  .nav-tab { padding: 14px 12px; font-size: 9px; }
+}
+
+/* ===== DICE SVG SHAPES ===== */
+.die-poly { fill: none; stroke: var(--gold); stroke-width: 1.5; opacity: 0.8; }
+.die-num { font-family: 'Cinzel Decorative', serif; fill: var(--gold); font-size: 16px; text-anchor: middle; dominant-baseline: middle; }
+
+/* Traits/Bonds/Flaws */
+.trait-box { margin-bottom: 12px; }
+.trait-box label { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 5px; }
+.trait-box textarea { width: 100%; min-height: 64px; padding: 9px 12px; background: rgba(245,230,200,0.04); border: 1px solid rgba(201,168,76,0.15); border-radius: 1px; color: var(--parchment); font-family: 'IM Fell English', serif; font-size: 13px; outline: none; resize: vertical; transition: border-color 0.3s; }
+.trait-box textarea:focus { border-color: rgba(201,168,76,0.5); }
+</style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+
+<!-- ===== LOGIN PAGE ===== -->
+<div id="loginPage" class="page active">
+  <div class="login-box">
+    <div class="login-logo">
+      <h1>⚔️ Character<br>Vault</h1>
+      <p>Dungeons &amp; Dragons 5e</p>
+      <div class="login-divider"></div>
+    </div>
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="switchAuthTab('login')">Login</button>
+      <button class="tab-btn" onclick="switchAuthTab('register')">Register</button>
+    </div>
+    <div id="loginForm">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="loginUser" placeholder="Enter your name, adventurer..." />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="••••••••" />
+      </div>
+      <button class="btn-primary" onclick="doLogin()">⚔ Enter the Vault</button>
+    </div>
+    <div id="registerForm" style="display:none;">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="regUser" placeholder="Choose your name..." />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="regPass" placeholder="••••••••" />
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" id="regConfirm" placeholder="••••••••" />
+      </div>
+      <button class="btn-primary" onclick="doRegister()">📜 Create Account</button>
+    </div>
+    <div class="msg" id="authMsg"></div>
+  </div>
+</div>
+
+<!-- ===== APP PAGE ===== -->
+<div id="appPage" class="page">
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="navbar-brand">⚔ DnD Vault</div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchSheet('main')"><span class="tab-icon">🗡</span>Main Sheet</button>
+      <button class="nav-tab" onclick="switchSheet('bio')"><span class="tab-icon">📜</span>Biography</button>
+      <button class="nav-tab" onclick="switchSheet('spells')"><span class="tab-icon">✨</span>Spellbook</button>
+      <button class="nav-tab" onclick="switchSheet('dice')"><span class="tab-icon">🎲</span>Dice Roller</button>
+    </div>
+    <div class="navbar-right">
+      <span class="user-badge" id="userLabel"></span>
+      <button class="btn-logout" onclick="doLogout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- ===== SHEET 1: MAIN ===== -->
+  <div id="sheet-main" class="sheet-page active">
+
+    <!-- Header Info -->
+    <div class="panel mb20"><div class="corner-bl"></div><div class="corner-br"></div>
+      <div class="panel-title">Character Information</div>
+      <div class="field-row" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;">
+        <div class="field"><label>Character Name</label><input id="charName" type="text" placeholder="Name your hero..."/></div>
+        <div class="field"><label>Class</label><input id="charClass" type="text" placeholder="Wizard..."/></div>
+        <div class="field"><label>Level</label><input id="charLevel" type="text" placeholder="1"/></div>
+        <div class="field"><label>Race</label><input id="charRace" type="text" placeholder="Human..."/></div>
+        <div class="field"><label>Background</label><input id="charBg" type="text" placeholder="Soldier..."/></div>
+        <div class="field"><label>Alignment</label><input id="charAlign" type="text" placeholder="Lawful Good"/></div>
+      </div>
+      <div class="field-row" style="grid-template-columns: 1fr 1fr 1fr 1fr; margin-top:4px;">
+        <div class="field"><label>Player Name</label><input id="playerName" type="text" placeholder="Your name..."/></div>
+        <div class="field"><label>Experience Points</label><input id="charXP" type="text" placeholder="0"/></div>
+        <div class="field"><label>Proficiency Bonus</label><input id="charProf" type="text" placeholder="+2"/></div>
+        <div class="field"><label>Inspiration</label><input id="charInsp" type="text" placeholder="0"/></div>
+      </div>
+    </div>
+
+    <div class="layout-sidebar">
+
+      <!-- LEFT: Stats + Skills -->
+      <div>
+        <!-- Ability Scores -->
+        <div class="panel mb20"><div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="panel-title">Ability Scores</div>
+          <div class="stat-grid">
+            <div class="stat-box">
+              <span class="stat-name">STR</span>
+              <input class="stat-score" id="str" type="number" value="10" min="1" max="30" oninput="updateMod('str','strMod')"/>
+              <span class="stat-mod" id="strMod">+0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-name">DEX</span>
+              <input class="stat-score" id="dex" type="number" value="10" min="1" max="30" oninput="updateMod('dex','dexMod')"/>
+              <span class="stat-mod" id="dexMod">+0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-name">CON</span>
+              <input class="stat-score" id="con" type="number" value="10" min="1" max="30" oninput="updateMod('con','conMod')"/>
+              <span class="stat-mod" id="conMod">+0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-name">INT</span>
+              <input class="stat-score" id="int" type="number" value="10" min="1" max="30" oninput="updateMod('int','intMod')"/>
+              <span class="stat-mod" id="intMod">+0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-name">WIS</span>
+              <input class="stat-score" id="wis" type="number" value="10" min="1" max="30" oninput="updateMod('wis','wisMod')"/>
+              <span class="stat-mod" id="wisMod">+0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-name">CHA</span>
+              <input class="stat-score" id="cha" type="number" value="10" min="1" max="30" oninput="updateMod('cha','chaMod')"/>
+              <span class="stat-mod" id="chaMod">+0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Saving Throws -->
+        <div class="panel mb20"><div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="panel-title">Saving Throws</div>
+          <div id="savingThrows">
+            <div class="skill-row"><input type="checkbox" class="skill-check" id="stStr"><input class="skill-bonus" id="stStrB" type="text" value="0"><span class="skill-name">Strength</span></div>
+            <div class="skill-row"><input type="checkbox" class="skill-check" id="stDex"><input class="skill-bonus" id="stDexB" type="text" value="0"><span class="skill-name">Dexterity</span></div>
+            <div class="skill-row"><input type="checkbox" class="skill-check" id="stCon"><input class="skill-bonus" id="stConB" type="text" value="0"><span class="skill-name">Constitution</span></div>
+            <div class="skill-row"><input type="checkbox" class="skill-check" id="stInt"><input class="skill-bonus" id="stIntB" type="text" value="0"><span class="skill-name">Intelligence</span></div>
+            <div class="skill-row"><input type="checkbox" class="skill-check" id="stWis"><input class="skill-bonus" id="stWisB" type="text" value="0"><span class="skill-name">Wisdom</span></div>
+            <div class="skill-row"><input type="checkbox" class="skill-check" id="stCha"><input class="skill-bonus" id="stChaB" type="text" value="0"><span class="skill-name">Charisma</span></div>
+          </div>
+        </div>
+
+        <!-- Skills -->
+        <div class="panel"><div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="panel-title">Skills</div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Acrobatics</span><span class="skill-attr">DEX</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Animal Handling</span><span class="skill-attr">WIS</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Arcana</span><span class="skill-attr">INT</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Athletics</span><span class="skill-attr">STR</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Deception</span><span class="skill-attr">CHA</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">History</span><span class="skill-attr">INT</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Insight</span><span class="skill-attr">WIS</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Intimidation</span><span class="skill-attr">CHA</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Investigation</span><span class="skill-attr">INT</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Medicine</span><span class="skill-attr">WIS</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Nature</span><span class="skill-attr">INT</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Perception</span><span class="skill-attr">WIS</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Performance</span><span class="skill-attr">CHA</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Persuasion</span><span class="skill-attr">CHA</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Religion</span><span class="skill-attr">INT</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Sleight of Hand</span><span class="skill-attr">DEX</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Stealth</span><span class="skill-attr">DEX</span></div>
+          <div class="skill-row"><input type="checkbox" class="skill-check"><input class="skill-bonus" type="text" value="0"><span class="skill-name">Survival</span><span class="skill-attr">WIS</span></div>
+          <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(201,168,76,0.1);">
+            <div class="field"><label>Passive Wisdom (Perception)</label><input type="text" id="passiveWis" value="10"/></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div>
+        <!-- Combat -->
+        <div class="panel mb20"><div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="panel-title">Combat</div>
+          <div class="combat-grid" style="margin-bottom:16px;">
+            <div class="combat-stat"><label>Armor Class</label><input id="charAC" type="text" value="10"/></div>
+            <div class="combat-stat"><label>Initiative</label><input id="charInit" type="text" value="+0"/></div>
+            <div class="combat-stat"><label>Speed</label><input id="charSpeed" type="text" value="30 ft"/></div>
+          </div>
+          <div class="hp-section">
+            <div class="hp-box"><label>HP Maximum</label><input id="hpMax" type="text" value="0"/></div>
+            <div class="hp-box"><label>Current HP</label><input id="hpCur" type="text" value="0"/></div>
+            <div class="hp-box"><label>Temporary HP</label><input id="hpTemp" type="text" value="0"/></div>
+          </div>
+          <div class="layout-2" style="margin-bottom:16px;">
+            <div class="combat-stat"><label>Hit Dice</label><input id="hitDice" type="text" value="1d8"/></div>
+            <div class="combat-stat"><label>Hit Dice Total</label><input id="hitDiceTotal" type="text" value="1"/></div>
+          </div>
+          <!-- Death Saves -->
+          <div class="death-saves">
+            <div>
+              <label style="color:var(--gold);font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:6px;">Death Saves</label>
+              <div style="display:flex;gap:16px;align-items:center;">
+                <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
+                  <span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;color:#4caf50;text-transform:uppercase;">Successes</span>
+                  <div class="save-circles">
+                    <input type="checkbox" class="save-circle success"><input type="checkbox" class="save-circle success"><input type="checkbox" class="save-circle success">
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
+                  <span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;color:#e53935;text-transform:uppercase;">Failures</span>
+                  <div class="save-circles">
+                    <input type="checkbox" class="save-circle failure"><input type="checkbox" class="save-circle failure"><input type="checkbox" class="save-circle failure">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attacks -->
+        <div class="panel mb20"><div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="panel-title">Attacks &amp; Spellcasting</div>
+          <table class="attacks-table">
+            <thead><tr><th>Name</th><th>Atk Bonus</th><th>Damage / Type</th></tr></thead>
+            <tbody>
+              <tr><td><input type="text" placeholder="Longsword"/></td><td><input type="text" placeholder="+5"/></td><td><input type="text" placeholder="1d8+3 slashing"/></td></tr>
+              <tr><td><input type="text" placeholder=""/></td><td><input type="text" placeholder=""/></td><td><input type="text" placeholder=""/></td></tr>
+              <tr><td><input type="text" placeholder=""/></td><td><input type="text" placeholder=""/></td><td><input type="text" placeholder=""/></td></tr>
+            </tbody>
+          </table>
+          <div class="field" style="margin-top:12px;"><label>Notes</label><textarea placeholder="Additional attack notes..."></textarea></div>
+        </div>
+
+        <!-- Personality -->
+        <div class="panel mb20"><div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="panel-title">Personality</div>
+          <div class="trait-box"><label>Personality Traits</label><textarea id="traits" placeholder="Describe your personality..."></textarea></div>
+          <div class="trait-box"><label>Ideals</label><textarea id="ideals" placeholder="What do you believe in..."></textarea></div>
+          <div class="trait-box"><label>Bonds</label><textarea id="bonds" placeholder="What ties you to the world..."></textarea></div>
+          <div class="trait-box"><label>Flaws</label><textarea id="flaws" placeholder="Your weaknesses..."></textarea></div>
+        </div>
+
+        <!-- Other -->
+        <div class="panel"><div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="panel-title">Other Proficiencies &amp; Equipment</div>
+          <div class="layout-2">
+            <div class="field"><label>Other Proficiencies &amp; Languages</label><textarea placeholder="Languages, weapon/armor proficiencies..."></textarea></div>
+            <div class="field"><label>Equipment &amp; Inventory</label><textarea placeholder="List your equipment..."></textarea></div>
+          </div>
+          <div class="field"><label>Features &amp; Traits</label><textarea placeholder="Class features, racial traits, feats..."></textarea></div>
+          <div style="margin-top:12px;">
+            <div class="panel-title" style="margin-bottom:12px;">Currency</div>
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;">
+              <div class="field"><label>CP</label><input type="text" value="0"/></div>
+              <div class="field"><label>SP</label><input type="text" value="0"/></div>
+              <div class="field"><label>EP</label><input type="text" value="0"/></div>
+              <div class="field"><label>GP</label><input type="text" value="0"/></div>
+              <div class="field"><label>PP</label><input type="text" value="0"/></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SHEET 2: BIO ===== -->
+  <div id="sheet-bio" class="sheet-page">
+    <!-- Header -->
+    <div class="panel mb20"><div class="corner-bl"></div><div class="corner-br"></div>
+      <div class="panel-title">Character Identity</div>
+      <div class="field-row" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;">
+        <div class="field"><label>Character Name</label><input type="text" id="bioName" placeholder="Name..."/></div>
+        <div class="field"><label>Age</label><input type="text" id="bioAge" placeholder="25"/></div>
+        <div class="field"><label>Height</label><input type="text" id="bioHeight" placeholder="5'10"/></div>
+        <div class="field"><label>Weight</label><input type="text" id="bioWeight" placeholder="150 lbs"/></div>
+        <div class="field"><label>Eyes</label><input type="text" id="bioEyes" placeholder="Blue"/></div>
+        <div class="field"><label>Hair</label><input type="text" id="bioHair" placeholder="Black"/></div>
+      </div>
+      <div class="field-row" style="grid-template-columns:1fr 1fr;margin-top:4px;">
+        <div class="field"><label>Skin</label><input type="text" id="bioSkin" placeholder="Pale"/></div>
+        <div class="field"><label>Gender</label><input type="text" id="bioGender" placeholder="..."/></div>
+      </div>
+    </div>
+
+    <div class="layout-2">
+      <div>
+        <!-- Character Appearance -->
+        <div class="panel mb20"><div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="panel-title">Character Appearance</div>
+          <div class="field"><label>Description</label><textarea id="bioAppearance" style="min-height:180px;" placeholder="Describe your character's physical appearance in detail..."></textarea></div>
+        </div>
+        <!-- Backstory -->
+        <div class="panel"><div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="panel-title">Character Backstory</div>
+          <div class="field"><label>Your Story</label><textarea id="bioBackstory" style="min-height:240px;" placeholder="Tell the tale of who you are and where you came from..."></textarea></div>
+        </div>
+      </div>
+      <div>
+        <!-- Allies & Organizations -->
+        <div class="panel mb20"><div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="panel-title">Allies &amp; Organizations</div>
+          <div class="field"><label>Organization / Group Name</label><input type="text" id="bioOrgName" placeholder="The Order of the Silver Hand..."/></div>
+          <div class="field"><label>Symbol / Crest Description</label><textarea id="bioOrgSymbol" style="min-height:60px;" placeholder="Describe the symbol or crest..."></textarea></div>
+          <div class="field"><label>Members &amp; Details</label><textarea id="bioAllies" style="min-height:200px;" placeholder="List your allies, their roles, relationships..."></textarea></div>
+        </div>
+        <!-- Additional Features -->
+        <div class="panel mb20"><div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="panel-title">Additional Features &amp; Traits</div>
+          <div class="field"><textarea id="bioFeatures" style="min-height:120px;" placeholder="Additional class features, racial abilities, or special traits..."></textarea></div>
+        </div>
+        <!-- Treasure -->
+        <div class="panel"><div class="corner-bl"></div><div class="corner-br"></div>
+          <div class="panel-title">Treasure &amp; Notable Items</div>
+          <div class="field"><textarea id="bioTreasure" style="min-height:120px;" placeholder="Magical items, heirlooms, valuable possessions..."></textarea></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SHEET 3: SPELLS ===== -->
+  <div id="sheet-spells" class="sheet-page">
+    <!-- Header -->
+    <div class="panel mb20"><div class="corner-bl"></div><div class="corner-br"></div>
+      <div class="panel-title">Spellcasting</div>
+      <div class="field-row" style="grid-template-columns:2fr 1fr 1fr 1fr;">
+        <div class="field"><label>Spellcasting Class</label><input type="text" id="spellClass" placeholder="Wizard..."/></div>
+        <div class="field"><label>Spellcasting Ability</label><input type="text" id="spellAbility" placeholder="INT"/></div>
+        <div class="field"><label>Spell Save DC</label><input type="text" id="spellDC" placeholder="14"/></div>
+        <div class="field"><label>Spell Attack Bonus</label><input type="text" id="spellAtk" placeholder="+6"/></div>
+      </div>
+    </div>
+
+    <!-- Cantrips -->
+    <div class="panel mb20"><div class="corner-bl"></div><div class="corner-br"></div>
+      <div class="panel-title">Cantrips (Level 0)</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+        <input class="spell-name-input" style="display:block;border:none;border-bottom:1px solid rgba(201,168,76,0.15);padding:6px 4px;" type="text" placeholder="Fire Bolt"/>
+        <input class="spell-name-input" style="display:block;border:none;border-bottom:1px solid rgba(201,168,76,0.15);padding:6px 4px;" type="text" placeholder="Mage Hand"/>
+        <input class="spell-name-input" style="display:block;border:none;border-bottom:1px solid rgba(201,168,76,0.15);padding:6px 4px;" type="text" placeholder=""/>
+        <input class="spell-name-input" style="display:block;border:none;border-bottom:1px solid rgba(201,168,76,0.15);padding:6px 4px;" type="text" placeholder=""/>
+        <input class="spell-name-input" style="display:block;border:none;border-bottom:1px solid rgba(201,168,76,0.15);padding:6px 4px;" type="text" placeholder=""/>
+        <input class="spell-name-input" style="display:block;border:none;border-bottom:1px solid rgba(201,168,76,0.15);padding:6px 4px;" type="text" placeholder=""/>
+      </div>
+    </div>
+
+    <!-- Spell Levels -->
+    <div class="spell-grid-3">
+      <!-- Level 1 -->
+      <div class="spell-level-block">
+        <div class="spell-level-header">
+          <div class="spell-level-badge">1</div>
+          <div>
+            <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;">Level 1 Spells</div>
+            <div class="spell-slots-row" style="margin-top:4px;">
+              <span class="slot-label">Slots:</span>
+              <input class="slot-input" type="text" value="4" style="width:36px;"/>
+              <span class="slot-label">/ Used:</span>
+              <input class="slot-input" type="text" value="0" style="width:36px;"/>
+            </div>
+          </div>
+        </div>
+        <div class="spell-list" id="spells1"></div>
+      </div>
+      <!-- Level 2 -->
+      <div class="spell-level-block">
+        <div class="spell-level-header">
+          <div class="spell-level-badge">2</div>
+          <div>
+            <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;">Level 2 Spells</div>
+            <div class="spell-slots-row" style="margin-top:4px;">
+              <span class="slot-label">Slots:</span>
+              <input class="slot-input" type="text" value="3" style="width:36px;"/>
+              <span class="slot-label">/ Used:</span>
+              <input class="slot-input" type="text" value="0" style="width:36px;"/>
+            </div>
+          </div>
+        </div>
+        <div class="spell-list" id="spells2"></div>
+      </div>
+      <!-- Level 3 -->
+      <div class="spell-level-block">
+        <div class="spell-level-header">
+          <div class="spell-level-badge">3</div>
+          <div>
+            <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;">Level 3 Spells</div>
+            <div class="spell-slots-row" style="margin-top:4px;">
+              <span class="slot-label">Slots:</span>
+              <input class="slot-input" type="text" value="3" style="width:36px;"/>
+              <span class="slot-label">/ Used:</span>
+              <input class="slot-input" type="text" value="0" style="width:36px;"/>
+            </div>
+          </div>
+        </div>
+        <div class="spell-list" id="spells3"></div>
+      </div>
+      <!-- Level 4 -->
+      <div class="spell-level-block">
+        <div class="spell-level-header">
+          <div class="spell-level-badge">4</div>
+          <div>
+            <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;">Level 4 Spells</div>
+            <div class="spell-slots-row" style="margin-top:4px;">
+              <span class="slot-label">Slots:</span>
+              <input class="slot-input" type="text" value="1" style="width:36px;"/>
+              <span class="slot-label">/ Used:</span>
+              <input class="slot-input" type="text" value="0" style="width:36px;"/>
+            </div>
+          </div>
+        </div>
+        <div class="spell-list" id="spells4"></div>
+      </div>
+      <!-- Level 5 -->
+      <div class="spell-level-block">
+        <div class="spell-level-header">
+          <div class="spell-level-badge">5</div>
+          <div>
+            <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;">Level 5 Spells</div>
+            <div class="spell-slots-row" style="margin-top:4px;">
+              <span class="slot-label">Slots:</span>
+              <input class="slot-input" type="text" value="0" style="width:36px;"/>
+              <span class="slot-label">/ Used:</span>
+              <input class="slot-input" type="text" value="0" style="width:36px;"/>
+            </div>
+          </div>
+        </div>
+        <div class="spell-list" id="spells5"></div>
+      </div>
+      <!-- Level 6 -->
+      <div class="spell-level-block">
+        <div class="spell-level-header">
+          <div class="spell-level-badge">6</div>
+          <div>
+            <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;">Level 6 Spells</div>
+            <div class="spell-slots-row" style="margin-top:4px;">
+              <span class="slot-label">Slots:</span>
+              <input class="slot-input" type="text" value="0" style="width:36px;"/>
+              <span class="slot-label">/ Used:</span>
+              <input class="slot-input" type="text" value="0" style="width:36px;"/>
+            </div>
+          </div>
+        </div>
+        <div class="spell-list" id="spells6"></div>
+      </div>
+      <!-- Level 7 -->
+      <div class="spell-level-block">
+        <div class="spell-level-header">
+          <div class="spell-level-badge">7</div>
+          <div>
+            <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;">Level 7 Spells</div>
+            <div class="spell-slots-row" style="margin-top:4px;">
+              <span class="slot-label">Slots:</span>
+              <input class="slot-input" type="text" value="0" style="width:36px;"/>
+              <span class="slot-label">/ Used:</span>
+              <input class="slot-input" type="text" value="0" style="width:36px;"/>
+            </div>
+          </div>
+        </div>
+        <div class="spell-list" id="spells7"></div>
+      </div>
+      <!-- Level 8 -->
+      <div class="spell-level-block">
+        <div class="spell-level-header">
+          <div class="spell-level-badge">8</div>
+          <div>
+            <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;">Level 8 Spells</div>
+            <div class="spell-slots-row" style="margin-top:4px;">
+              <span class="slot-label">Slots:</span>
+              <input class="slot-input" type="text" value="0" style="width:36px;"/>
+              <span class="slot-label">/ Used:</span>
+              <input class="slot-input" type="text" value="0" style="width:36px;"/>
+            </div>
+          </div>
+        </div>
+        <div class="spell-list" id="spells8"></div>
+      </div>
+      <!-- Level 9 -->
+      <div class="spell-level-block">
+        <div class="spell-level-header">
+          <div class="spell-level-badge">9</div>
+          <div>
+            <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;">Level 9 Spells</div>
+            <div class="spell-slots-row" style="margin-top:4px;">
+              <span class="slot-label">Slots:</span>
+              <input class="slot-input" type="text" value="0" style="width:36px;"/>
+              <span class="slot-label">/ Used:</span>
+              <input class="slot-input" type="text" value="0" style="width:36px;"/>
+            </div>
+          </div>
+        </div>
+        <div class="spell-list" id="spells9"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DICE PAGE ===== -->
+  <div id="sheet-dice" class="sheet-page">
+    <div class="dice-page-wrap">
+      <div class="dice-page-title">
+        <h2>🎲 Dice Roller</h2>
+        <p>Roll the bones, adventurer</p>
+      </div>
+
+      <div class="dice-tray" id="diceTray">
+        <!-- Dice cards injected by JS -->
+      </div>
+
+      <!-- History -->
+      <div class="dice-history-panel">
+        <div class="history-title">
+          Roll History
+          <button class="btn-clear-history" onclick="clearHistory()">Clear</button>
+        </div>
+        <div class="history-list" id="rollHistory">
+          <span style="color:var(--ash);font-family:'Cinzel',serif;font-size:11px;font-style:italic;">No rolls yet...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAVE BAR -->
+  <div class="save-bar" id="saveBar">
+    <span class="save-msg" id="saveMsg">✓ Character saved!</span>
+    <button class="btn-edit btn-primary" onclick="enterEdit()" style="padding:10px 28px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:1px;background:none;border:1px solid rgba(201,168,76,0.3);color:var(--gold);">✏ Edit Character</button>
+    <button class="btn-save btn-primary" onclick="saveCharacter()" style="padding:10px 28px;">💾 Save Character</button>
+  </div>
+
+</div>
+
+<script>
+// ========== AUTH ==========
+let users = JSON.parse(localStorage.getItem('dnd_users') || '{}');
+let currentUser = null;
+
+function switchAuthTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('authMsg').textContent = '';
+}
+
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text; el.className = 'msg ' + type;
+  setTimeout(() => { el.textContent = ''; el.className = 'msg'; }, 3000);
+}
+
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if (!u || !p) { showMsg('authMsg','Please fill all fields.','error'); return; }
+  if (!users[u] || users[u].password !== p) { showMsg('authMsg','Invalid username or password.','error'); return; }
+  currentUser = u;
+  document.getElementById('userLabel').textContent = '⚔ ' + u;
+  enterApp();
+}
+
+function doRegister() {
+  const u = document.getElementById('regUser').value.trim();
+  const p = document.getElementById('regPass').value;
+  const c = document.getElementById('regConfirm').value;
+  if (!u || !p || !c) { showMsg('authMsg','Please fill all fields.','error'); return; }
+  if (p !== c) { showMsg('authMsg','Passwords do not match.','error'); return; }
+  if (users[u]) { showMsg('authMsg','Username already taken.','error'); return; }
+  users[u] = { password: p, sheet: {} };
+  localStorage.setItem('dnd_users', JSON.stringify(users));
+  showMsg('authMsg','Account created! Please login.','success');
+}
+
+function doLogout() {
+  saveCharacter(true);
+  currentUser = null;
+  document.getElementById('loginPage').classList.add('active');
+  document.getElementById('appPage').classList.remove('active');
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+}
+
+function enterApp() {
+  document.getElementById('loginPage').classList.remove('active');
+  document.getElementById('appPage').classList.add('active');
+  loadCharacter();
+  enterView();
+}
+
+// ========== SHEET NAVIGATION ==========
+function switchSheet(name) {
+  document.querySelectorAll('.sheet-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sheet-' + name).classList.add('active');
+  event.target.classList.add('active');
+  const saveBar = document.getElementById('saveBar');
+  saveBar.classList.toggle('hidden', name === 'dice');
+}
+
+// ========== EDIT/VIEW MODE ==========
+function enterEdit() { document.body.className = 'edit-mode'; }
+function enterView() { document.body.className = 'view-mode'; }
+
+// ========== SAVE/LOAD ==========
+function saveCharacter(silent) {
+  if (!currentUser) return;
+  const sheet = {};
+  document.querySelectorAll('[id]').forEach(el => {
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+      sheet[el.id] = el.tagName === 'INPUT' && el.type === 'checkbox' ? el.checked : el.value;
+    }
+  });
+  users[currentUser].sheet = sheet;
+  localStorage.setItem('dnd_users', JSON.stringify(users));
+  enterView();
+  if (!silent) {
+    const msg = document.getElementById('saveMsg');
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 2000);
+  }
+}
+
+function loadCharacter() {
+  if (!currentUser || !users[currentUser]) return;
+  const sheet = users[currentUser].sheet || {};
+  Object.entries(sheet).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.type === 'checkbox') el.checked = val;
+    else el.value = val;
+  });
+  // Update mods
+  ['str','dex','con','int','wis','cha'].forEach(s => updateMod(s, s+'Mod'));
+}
+
+// ========== STAT MODIFIERS ==========
+function updateMod(statId, modId) {
+  const score = parseInt(document.getElementById(statId).value) || 10;
+  const mod = Math.floor((score - 10) / 2);
+  document.getElementById(modId).textContent = (mod >= 0 ? '+' : '') + mod;
+}
+
+// ========== SPELL LISTS ==========
+function buildSpellList(lvl, count) {
+  const container = document.getElementById('spells' + lvl);
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 0; i < count; i++) {
+    const row = document.createElement('div');
+    row.className = 'spell-row';
+    row.innerHTML = `<input type="checkbox" class="spell-prepared" id="sp${lvl}_${i}_prep">
+      <input class="spell-name-input" type="text" id="sp${lvl}_${i}" placeholder="Spell name...">`;
+    container.appendChild(row);
+  }
+}
+
+const SPELL_COUNTS = { 1:13, 2:13, 3:13, 4:13, 5:9, 6:9, 7:9, 8:7, 9:7 };
+Object.entries(SPELL_COUNTS).forEach(([lvl, count]) => buildSpellList(lvl, count));
+
+// ========== DICE ROLLER ==========
+const DICE = [
+  { name: 'D4',  sides: 4,  svg: `<svg viewBox="0 0 80 80"><polygon class="die-poly" points="40,8 72,65 8,65"/><text class="die-num" x="40" y="52">D4</text></svg>` },
+  { name: 'D6',  sides: 6,  svg: `<svg viewBox="0 0 80 80"><rect class="die-poly" x="10" y="10" width="60" height="60" rx="6"/><text class="die-num" x="40" y="44">D6</text></svg>` },
+  { name: 'D8',  sides: 8,  svg: `<svg viewBox="0 0 80 80"><polygon class="die-poly" points="40,6 74,40 40,74 6,40"/><text class="die-num" x="40" y="44">D8</text></svg>` },
+  { name: 'D10', sides: 10, svg: `<svg viewBox="0 0 80 80"><polygon class="die-poly" points="40,6 68,28 68,60 40,74 12,60 12,28"/><text class="die-num" x="40" y="44">D10</text></svg>` },
+  { name: 'D12', sides: 12, svg: `<svg viewBox="0 0 80 80"><polygon class="die-poly" points="40,5 60,14 72,34 68,56 50,70 30,70 12,56 8,34 20,14"/><text class="die-num" x="40" y="44">D12</text></svg>` },
+  { name: 'D20', sides: 20, svg: `<svg viewBox="0 0 80 80"><polygon class="die-poly" points="40,4 65,20 72,48 56,70 24,70 8,48 15,20"/><text class="die-num" x="40" y="44">D20</text></svg>` },
+  { name: 'D100',sides: 100,svg: `<svg viewBox="0 0 80 80"><ellipse class="die-poly" cx="40" cy="40" rx="34" ry="34"/><text class="die-num" x="40" y="44" font-size="12">D100</text></svg>` },
+];
+
+const diceCounts = {};
+const diceHistory = [];
+
+function buildDiceTray() {
+  const tray = document.getElementById('diceTray');
+  tray.innerHTML = '';
+  DICE.forEach(die => {
+    diceCounts[die.name] = 1;
+    const card = document.createElement('div');
+    card.className = 'die-card';
+    card.innerHTML = `
+      <div class="dc-bl"></div><div class="dc-br"></div>
+      <div class="die-svg">${die.svg}</div>
+      <div class="die-name">${die.name}</div>
+      <div class="die-count-row">
+        <button class="count-btn" onclick="changeDieCount('${die.name}',-1)">−</button>
+        <span class="die-count" id="count_${die.name}">1</span>
+        <button class="count-btn" onclick="changeDieCount('${die.name}',1)">+</button>
+      </div>
+      <div class="die-modifier-row">
+        <label>Modifier</label>
+        <input class="die-modifier" id="mod_${die.name}" type="number" value="0" placeholder="0">
+      </div>
+      <button class="btn-roll" onclick="rollDie('${die.name}', ${die.sides})">🎲 Roll</button>
+      <div class="die-result" id="result_${die.name}">
+        <span style="color:var(--ash);font-family:'Cinzel',serif;font-size:12px;letter-spacing:2px;">— — —</span>
+      </div>`;
+    tray.appendChild(card);
+  });
+}
+
+function changeDieCount(name, delta) {
+  diceCounts[name] = Math.max(1, (diceCounts[name] || 1) + delta);
+  document.getElementById('count_' + name).textContent = diceCounts[name];
+}
+
+function rollDie(name, sides) {
+  const count = diceCounts[name] || 1;
+  const mod = parseInt(document.getElementById('mod_' + name).value) || 0;
+  const rolls = [];
+  for (let i = 0; i < count; i++) rolls.push(Math.floor(Math.random() * sides) + 1);
+  const total = rolls.reduce((a, b) => a + b, 0) + mod;
+  const label = `${count}${name}${mod !== 0 ? (mod > 0 ? '+' + mod : mod) : ''}`;
+  const breakdown = rolls.join(', ') + (mod !== 0 ? (mod > 0 ? ' +' + mod : ' ' + mod) : '');
+
+  const resultEl = document.getElementById('result_' + name);
+  resultEl.innerHTML = `
+    <div class="result-total result-anim">${total}</div>
+    <div class="result-breakdown">[${breakdown}]</div>
+    <div class="result-label">${label}</div>`;
+
+  // History
+  diceHistory.unshift({ label, total, breakdown });
+  if (diceHistory.length > 20) diceHistory.pop();
+  renderHistory();
+}
+
+function renderHistory() {
+  const el = document.getElementById('rollHistory');
+  if (!diceHistory.length) { el.innerHTML = '<span style="color:var(--ash);font-family:\'Cinzel\',serif;font-size:11px;font-style:italic;">No rolls yet...</span>'; return; }
+  el.innerHTML = diceHistory.map(h =>
+    `<div class="history-item">${h.label}: <strong>${h.total}</strong> <span style="color:var(--ash);font-size:10px;">[${h.breakdown}]</span></div>`
+  ).join('');
+}
+
+function clearHistory() {
+  diceHistory.length = 0; renderHistory();
+  document.querySelectorAll('.die-result').forEach(el => {
+    el.innerHTML = '<span style="color:var(--ash);font-family:\'Cinzel\',serif;font-size:12px;letter-spacing:2px;">— — —</span>';
+  });
+}
+
+// ========== INIT ==========
+buildDiceTray();
+// Init stat mods
+['str','dex','con','int','wis','cha'].forEach(s => updateMod(s, s+'Mod'));
+// Default view mode
+document.body.className = 'view-mode';
+// Start on login
+document.getElementById('loginPage').classList.add('active');
+</script>
+</body>
+</html>
